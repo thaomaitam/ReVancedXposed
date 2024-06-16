@@ -37,12 +37,44 @@ class MusicHook(val app: Application, val lpparam: LoadPackageParam) {
             MinimizedPlayback()
             RemoveUpgradeButton()
             HideGetPremium()
+            EnableExclusiveAudioPlayback()
             saveCache()
         } catch (err: Exception) {
             pref.edit().clear().apply()
             throw err
         } finally {
             if (!cached) dexkit.close()
+        }
+    }
+
+    private fun EnableExclusiveAudioPlayback() {
+        getMethodData("AllowExclusiveAudioPlaybackFingerprint") {
+            dexkit.findMethod {
+                matcher {
+                    returnType = "boolean"
+                    modifiers = Modifier.PUBLIC or Modifier.FINAL
+                    paramCount = 0
+                    opNames = listOf(
+                        "invoke-virtual",
+                        "move-result-object",
+                        "check-cast",
+                        "if-nez",
+                        "iget-object",
+                        "invoke-virtual",
+                        "move-result",
+                        "goto",
+                        "invoke-virtual",
+                        "move-result",
+                        "return",
+
+                        )
+                }
+            }.single()
+        }.let {
+            XposedBridge.hookMethod(
+                it.getMethodInstance(lpparam.classLoader),
+                XC_MethodReplacement.returnConstant(true)
+            )
         }
     }
 
