@@ -19,6 +19,15 @@ class MainHook : IXposedHookLoadPackage {
                     XposedBridge.log("Youtube Music handleLoadPackage: ${t}ms")
                 }
             }
+
+            "com.google.android.youtube" -> {
+                inContext(lpparam) { app ->
+                    val t = measureTimeMillis {
+                        YoutubeHook(app, lpparam).Hook()
+                    }
+                    XposedBridge.log("Youtube handleLoadPackage: ${t}ms")
+                }
+            }
         }
     }
 }

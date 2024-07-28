@@ -51,5 +51,6 @@ android {
 
 dependencies {
     implementation(libs.dexkit)
+    implementation(libs.annotation)
     compileOnly(libs.xposed)
 }
