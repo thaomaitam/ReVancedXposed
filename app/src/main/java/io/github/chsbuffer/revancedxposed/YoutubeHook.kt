@@ -23,8 +23,7 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
 
     fun Hook() {
         val cached = loadCache()
-        if (!cached)
-            dexkit = createDexKit(lpparam)
+        if (!cached) dexkit = createDexKit(lpparam)
 
         try {
             VideoAds()
@@ -231,14 +230,9 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
     }
 
     fun LithoFilter() {
-        val ComponentContextParserFingerprint = getDexMethod("ComponentContextParserFingerprint") {
-            dexkit.findMethod {
-                matcher {
-                    addEqString("Component was not found %s because it was removed due to duplicate converter bindings.")
-                }
-            }.single()
-        }
 
+
+        //region Pass the buffer into Integrations.
         val ProtobufBufferReferenceFingerprint =
             getDexMethod("ProtobufBufferReferenceFingerprint") {
                 dexkit.findMethod {
@@ -253,25 +247,15 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
                 }.single()
             }
 
-        // Pass the buffer into Integrations.
         XposedBridge.hookMethod(ProtobufBufferReferenceFingerprint.getMethodInstance(classLoader),
             object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     LithoFilterPatch.setProtoBuffer(param.args[1] as ByteBuffer)
                 }
             })
+        //endregion
 
-        // Hook the method that parses bytes into a ComponentContext.
-        val emptyComponentClass = getDexClass("emptyComponentClass") {
-            dexkit.findClass {
-                matcher {
-                    addMethod {
-                        name = "<init>"
-                        addEqString("EmptyComponent")
-                    }
-                }
-            }.single()
-        }
+        //region Hook the method that parses bytes into a ComponentContext.
 
         val parseBytesToConversionContext = getDexMethod("parseBytesToConversionContext") {
             val method = dexkit.findMethod {
@@ -285,17 +269,18 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
                     )
                 }
             }.single()
+            //
             val conversionContextClass = method.returnType!!
             setString("conversionContextClass", conversionContextClass)
             setString("identifierFieldData",
-                conversionContextClass.methods.single { it.methodName == "toString" }.usingFields.filter { it.usingType == FieldUsingType.Read && it.field.typeSign == "Ljava/lang/String;" }[1].field
+                conversionContextClass.methods.single { it.methodName == "toString" }.usingFields.filter {
+                        it.usingType == FieldUsingType.Read && it.field.typeSign == "Ljava/lang/String;"
+                    }[1].field
             )
             setString("pathBuilderFieldData",
                 conversionContextClass.fields.single { it.typeSign == "Ljava/lang/StringBuilder;" })
             method
         }
-
-        val conversionContextClass = getDexClass("conversionContextClass")
 
         val identifierField = getDexField("identifierFieldData").getFieldInstance(classLoader)
         val pathBuilderField = getDexField("pathBuilderFieldData").getFieldInstance(classLoader)
@@ -313,16 +298,36 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
                 }
             })
 
+        // Return an EmptyComponent instead of the original component if the filterState method returns true.
+        val ComponentContextParserFingerprint = getDexMethod("ComponentContextParserFingerprint") {
+            dexkit.findMethod {
+                matcher {
+                    addEqString("Component was not found %s because it was removed due to duplicate converter bindings.")
+                }
+            }.single()
+        }
+        val emptyComponentClass = getDexClass("emptyComponentClass") {
+            dexkit.findClass {
+                matcher {
+                    addMethod {
+                        name = "<init>"
+                        addEqString("EmptyComponent")
+                    }
+                }
+            }.single()
+        }
+        val emptyComponentCtor =
+            emptyComponentClass.getInstance(classLoader).declaredConstructors.single()
+
         XposedBridge.hookMethod(ComponentContextParserFingerprint.getMethodInstance(classLoader),
             object : XC_MethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     if (filtered.get() == true) {
-                        param.result =
-                            emptyComponentClass.getInstance(classLoader).declaredConstructors.single()
-                                .newInstance()
+                        param.result = emptyComponentCtor.newInstance()
                     }
                 }
             })
+        //endregion
     }
 
     fun HideAds() {

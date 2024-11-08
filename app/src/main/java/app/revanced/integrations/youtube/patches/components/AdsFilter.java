@@ -168,6 +168,19 @@ public final class AdsFilter extends Filter {
         return super.isFiltered(identifier, path, protobufBufferArray, matchedGroup, contentType, contentIndex);
     }
 
+/*
+    */
+/**
+     * Hide the view, which shows ads in the homepage.
+     *
+     * @param view The view, which shows ads.
+     *//*
+
+    public static void hideAdAttributionView(View view) {
+        Utils.hideViewBy0dpUnderCondition(Settings.HIDE_GENERAL_ADS, view);
+    }
+*/
+
     /**
      * Close the fullscreen ad.
      * <p>

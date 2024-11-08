@@ -14,6 +14,7 @@ import org.luckypray.dexkit.wrap.DexMethod
 
 @SuppressLint("CommitPrefEdits")
 open class Cache(val app: Application) {
+    open val moduleRel = 1
     lateinit var pref: SharedPreferences
     lateinit var map: MutableMap<String, String>
 
@@ -22,7 +23,7 @@ open class Cache(val app: Application) {
         pref = app.getSharedPreferences("xprevanced", Context.MODE_PRIVATE)
         val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
 
-        val id = packageInfo.lastUpdateTime.toString()
+        val id = "${packageInfo.lastUpdateTime}-$moduleRel"
         val cachedId = pref.getString("id", null)
 
         XposedBridge.log("cache ID: $id")
