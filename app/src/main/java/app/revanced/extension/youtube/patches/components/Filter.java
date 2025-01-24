@@ -1,4 +1,4 @@
-package app.revanced.integrations.youtube.patches.components;
+package app.revanced.extension.youtube.patches.components;
 
 import androidx.annotation.Nullable;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import app.revanced.integrations.shared.Logger;
-import app.revanced.integrations.shared.settings.BaseSettings;
+import app.revanced.extension.shared.Logger;
+import app.revanced.extension.shared.settings.BaseSettings;
 
 /**
  * Filters litho based components.

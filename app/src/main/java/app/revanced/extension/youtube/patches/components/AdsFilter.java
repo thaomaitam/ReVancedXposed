@@ -1,4 +1,4 @@
-package app.revanced.integrations.youtube.patches.components;
+package app.revanced.extension.youtube.patches.components;
 
 import android.app.Instrumentation;
 import android.view.KeyEvent;
@@ -6,10 +6,11 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import app.revanced.integrations.youtube.settings.Settings;
-import app.revanced.integrations.shared.Logger;
-import app.revanced.integrations.shared.Utils;
-import app.revanced.integrations.youtube.StringTrieSearch;
+import app.revanced.extension.youtube.settings.Settings;
+import app.revanced.extension.shared.Logger;
+import app.revanced.extension.shared.Utils;
+import app.revanced.extension.youtube.StringTrieSearch;
+import kotlin.NotImplementedError;
 
 @SuppressWarnings("unused")
 public final class AdsFilter extends Filter {
@@ -21,6 +22,9 @@ public final class AdsFilter extends Filter {
     // endregion
 
     private final StringTrieSearch exceptions = new StringTrieSearch();
+
+    private final StringFilterGroup playerShoppingShelf;
+    private final ByteArrayFilterGroup playerShoppingShelfBuffer;
 
     private final StringFilterGroup channelProfile;
     private final ByteArrayFilterGroup visitStoreButton;
@@ -77,25 +81,29 @@ public final class AdsFilter extends Filter {
                 "text_image_button_layout",
                 "primetime_promo",
                 "product_details",
+                "composite_concurrent_carousel_layout",
                 "carousel_headered_layout",
                 "full_width_portrait_image_layout",
-                "brand_video_shelf"
+                "brand_video_shelf",
+                "brand_video_singleton"
         );
 
-//        final var movieAds = new StringFilterGroup(
-//                Settings.HIDE_MOVIES_SECTION,
-//                "browsy_bar",
-//                "compact_movie",
-//                "horizontal_movie_shelf",
-//                "movie_and_show_upsell_card",
-//                "compact_tvfilm_item",
-//                "offer_module_root"
-//        );
+        final var movieAds = new StringFilterGroup(
+                Settings.HIDE_MOVIES_SECTION,
+                "browsy_bar",
+                "compact_movie",
+                "horizontal_movie_shelf",
+                "movie_and_show_upsell_card",
+                "compact_tvfilm_item",
+                "offer_module_root"
+        );
 
         final var viewProducts = new StringFilterGroup(
                 Settings.HIDE_PRODUCTS_BANNER,
                 "product_item",
-                "products_in_video"
+                "products_in_video",
+                "shopping_overlay.eml", // Video player overlay shopping links.
+                "shopping_carousel.eml" // Channel profile shopping shelf.
         );
 
         shoppingLinks = new StringFilterGroup(
@@ -106,6 +114,16 @@ public final class AdsFilter extends Filter {
         channelProfile = new StringFilterGroup(
                 null,
                 "channel_profile.eml"
+        );
+
+        playerShoppingShelf = new StringFilterGroup(
+                null,
+                "horizontal_shelf.eml"
+        );
+
+        playerShoppingShelfBuffer = new ByteArrayFilterGroup(
+                Settings.HIDE_PLAYER_STORE_SHELF,
+                "shopping_item_card_list.eml"
         );
 
         visitStoreButton = new ByteArrayFilterGroup(
@@ -137,14 +155,22 @@ public final class AdsFilter extends Filter {
                 fullscreenAd,
                 channelProfile,
                 webLinkPanel,
-                shoppingLinks
-//                movieAds
+                shoppingLinks,
+                playerShoppingShelf,
+                movieAds
         );
     }
 
     @Override
     boolean isFiltered(@Nullable String identifier, String path, byte[] protobufBufferArray,
                        StringFilterGroup matchedGroup, FilterContentType contentType, int contentIndex) {
+        if (matchedGroup == playerShoppingShelf) {
+            if (contentIndex == 0 && playerShoppingShelfBuffer.check(protobufBufferArray).isFiltered()) {
+                return super.isFiltered(identifier, path, protobufBufferArray, matchedGroup, contentType, contentIndex);
+            }
+            return false;
+        }
+
         if (exceptions.matches(path))
             return false;
 
@@ -168,18 +194,15 @@ public final class AdsFilter extends Filter {
         return super.isFiltered(identifier, path, protobufBufferArray, matchedGroup, contentType, contentIndex);
     }
 
-/*
-    */
-/**
+    /**
      * Hide the view, which shows ads in the homepage.
      *
      * @param view The view, which shows ads.
-     *//*
-
+     */
     public static void hideAdAttributionView(View view) {
-        Utils.hideViewBy0dpUnderCondition(Settings.HIDE_GENERAL_ADS, view);
+        throw new NotImplementedError();
+//        Utils.hideViewBy0dpUnderCondition(Settings.HIDE_GENERAL_ADS, view);
     }
-*/
 
     /**
      * Close the fullscreen ad.

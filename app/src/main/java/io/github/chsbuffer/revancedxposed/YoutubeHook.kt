@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.ClipData
 import android.content.Intent
 import android.view.View
-import app.revanced.integrations.shared.Utils
-import app.revanced.integrations.youtube.patches.components.LithoFilterPatch
+import app.revanced.extension.shared.Utils
+import app.revanced.extension.youtube.patches.components.LithoFilterPatch
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
@@ -303,6 +303,9 @@ class YoutubeHook(app: Application, val lpparam: LoadPackageParam) : Cache(app) 
             dexkit.findMethod {
                 matcher {
                     addEqString("Component was not found %s because it was removed due to duplicate converter bindings.")
+                }
+                matcher {
+                    addEqString("Component was not found because it was removed due to duplicate converter bindings.")
                 }
             }.single()
         }

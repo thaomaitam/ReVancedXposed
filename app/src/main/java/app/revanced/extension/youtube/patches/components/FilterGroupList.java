@@ -1,4 +1,4 @@
-package app.revanced.integrations.youtube.patches.components;
+package app.revanced.extension.youtube.patches.components;
 
 import android.os.Build;
 
@@ -8,9 +8,9 @@ import androidx.annotation.RequiresApi;
 import java.util.*;
 import java.util.function.Consumer;
 
-import app.revanced.integrations.youtube.ByteTrieSearch;
-import app.revanced.integrations.youtube.StringTrieSearch;
-import app.revanced.integrations.youtube.TrieSearch;
+import app.revanced.extension.youtube.ByteTrieSearch;
+import app.revanced.extension.youtube.StringTrieSearch;
+import app.revanced.extension.youtube.TrieSearch;
 
 abstract class FilterGroupList<V, T extends FilterGroup<V>> implements Iterable<T> {
 

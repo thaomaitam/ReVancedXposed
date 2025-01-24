@@ -1,8 +1,8 @@
-package app.revanced.integrations.shared;
+package app.revanced.extension.shared;
 
-import static app.revanced.integrations.shared.settings.BaseSettings.DEBUG;
-import static app.revanced.integrations.shared.settings.BaseSettings.DEBUG_STACKTRACE;
-import static app.revanced.integrations.shared.settings.BaseSettings.DEBUG_TOAST_ON_ERROR;
+import static app.revanced.extension.shared.settings.BaseSettings.DEBUG;
+import static app.revanced.extension.shared.settings.BaseSettings.DEBUG_STACKTRACE;
+import static app.revanced.extension.shared.settings.BaseSettings.DEBUG_TOAST_ON_ERROR;
 
 import android.util.Log;
 
@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import app.revanced.integrations.shared.settings.BaseSettings;
+import app.revanced.extension.shared.settings.BaseSettings;
 
 public class Logger {
 

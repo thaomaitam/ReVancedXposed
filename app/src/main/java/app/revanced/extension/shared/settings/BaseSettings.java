@@ -1,4 +1,4 @@
-package app.revanced.integrations.shared.settings;
+package app.revanced.extension.shared.settings;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;

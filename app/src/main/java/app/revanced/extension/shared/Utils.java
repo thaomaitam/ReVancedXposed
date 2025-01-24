@@ -1,4 +1,4 @@
-package app.revanced.integrations.shared;
+package app.revanced.extension.shared;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

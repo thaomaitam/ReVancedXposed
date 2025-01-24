@@ -1,4 +1,4 @@
-package app.revanced.integrations.shared.settings;
+package app.revanced.extension.shared.settings;
 
 public class Setting<T> {
     T value;

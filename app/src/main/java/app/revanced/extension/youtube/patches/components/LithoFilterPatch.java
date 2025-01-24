@@ -1,4 +1,4 @@
-package app.revanced.integrations.youtube.patches.components;
+package app.revanced.extension.youtube.patches.components;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,9 +6,9 @@ import androidx.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import app.revanced.integrations.shared.Logger;
-import app.revanced.integrations.youtube.StringTrieSearch;
-import app.revanced.integrations.youtube.settings.Settings;
+import app.revanced.extension.shared.Logger;
+import app.revanced.extension.youtube.StringTrieSearch;
+import app.revanced.extension.youtube.settings.Settings;
 
 @SuppressWarnings("unused")
 public final class LithoFilterPatch {

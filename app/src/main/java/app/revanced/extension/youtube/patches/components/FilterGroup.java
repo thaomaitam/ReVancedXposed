@@ -1,10 +1,10 @@
-package app.revanced.integrations.youtube.patches.components;
+package app.revanced.extension.youtube.patches.components;
 
 import androidx.annotation.NonNull;
 
-import app.revanced.integrations.shared.Logger;
-import app.revanced.integrations.shared.settings.BooleanSetting;
-import app.revanced.integrations.youtube.ByteTrieSearch;
+import app.revanced.extension.shared.Logger;
+import app.revanced.extension.shared.settings.BooleanSetting;
+import app.revanced.extension.youtube.ByteTrieSearch;
 
 abstract class FilterGroup<T> {
     final static class FilterGroupResult {
