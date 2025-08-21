@@ -1,8 +1,15 @@
 name: Android CI
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "Test" ]
+    paths:
+      - "app/**"   # chỉ khi có thay đổi trong app/
+  pull_request:
+    branches: [ "Test" ]
+    paths:
+      - "app/**"
 
 jobs:
   build:
